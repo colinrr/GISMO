@@ -150,7 +150,7 @@ switch lower(sourceType)
         respInv = reshape(respInv,1,numel(respInv));
         
     case {'polezero'}
-        response = response_get_from_polezero(ws,source);
+        response = response_get_from_polezero(ws,source{1});
         respInv = 1./response.values;
         respInv(1) = 0;
         respInv = reshape(respInv,1,numel(respInv));
