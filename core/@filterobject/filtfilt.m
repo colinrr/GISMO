@@ -41,7 +41,8 @@ elseif isa(w,'waveform')
             ' value.  \nSee help waveform/fillgaps.']);
     end
     
-    
+    disp('Applying filter:')
+    disp(f)
     for n = 1 : numel(w);
         WN = f.cutoff / get(w(n),'NYQ');     %only one filter is assumed!
         [b, a] = getButter(f,WN);
@@ -55,8 +56,8 @@ w = addhistory(w,['Filtered: Type:', get(f,'type'), ' Cutoff: [',...
 
 %- - - -  helper function - - - - %
 function [b, a] = getButter(f, WN)
-f
-WN
+% f
+% WN
 switch f.type
     case 'H';
         [b,a] = butter(f.poles, WN, 'high');
