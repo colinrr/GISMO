@@ -69,6 +69,9 @@ function [cobj,sta,lta,sta_to_lta] = sta_lta(wave,varargin)
     minimum_duration_days = 3.0/86400;   % Any triggers shorter than minimum_duration_days are discarded
     lta_mode = 'continuous'; % (Default) Post trigger-on LTA behavior
 
+    % CROWELL edit, Jun 1 2017
+    plotflag = 1;
+    
     %% Check varargin size
     nv = numel(varargin);
     if ~rem(nv,2) == 0
@@ -89,6 +92,8 @@ function [cobj,sta,lta,sta_to_lta] = sta_lta(wave,varargin)
                         th_on = v2(3);       % Trigger on theshold
                         th_off = v2(4);      % Trigger off threshold
                         minimum_duration_days = v2(5)/86400;  % Minimum event duration
+                        % CROWELL EDIT
+%                         plotflag = v(6);
                     else
                         error('STA_LTA: Wrong format for input ''edp''')
                     end
@@ -170,22 +175,24 @@ function [cobj,sta,lta,sta_to_lta] = sta_lta(wave,varargin)
         end  
     end
     
-    figure
-    t_secs=(t-t(1))*86400;
-    ta_secs = (trig_array-t(1))*86400;
-    
-    ax(1)=subplot(4,1,1);plot(t_secs,get(wave,'data'),'k'),title('waveform')
-    ax(2)=subplot(4,1,2);plot(t_secs,sta,'k'),title('STA')
-    ax(3)=subplot(4,1,3);plot(t_secs,lta,'k'),title('LTA')
-    ax(4)=subplot(4,1,4);plot(t_secs,sta_to_lta,'k'),title('STA:LTA')
-    linkaxes(ax,'x')
-    hold on
-    a=axis();
-    xlabel('Time (s)')
-    plot([a(1) a(2)],[th_on th_on],'r');
-    plot([a(1) a(2)],[th_off th_off],'g');
-    for count=1:size(ta_secs,1)
-        plot(ta_secs(count,:),[0 0],'b','LineWidth',5);
+        t_secs=(t-t(1))*86400;
+        ta_secs = (trig_array-t(1))*86400;
+   % CROWELL EDITS - added IF statement
+    if plotflag
+        figure
+        ax(1)=subplot(4,1,1);plot(t_secs,get(wave,'data'),'k'),title('waveform')
+        ax(2)=subplot(4,1,2);plot(t_secs,sta,'k'),title('STA')
+        ax(3)=subplot(4,1,3);plot(t_secs,lta,'k'),title('LTA')
+        ax(4)=subplot(4,1,4);plot(t_secs,sta_to_lta,'k'),title('STA:LTA')
+        linkaxes(ax,'x')
+        hold on
+        a=axis();
+        xlabel('Time (s)')
+        plot([a(1) a(2)],[th_on th_on],'r');
+        plot([a(1) a(2)],[th_off th_off],'g');
+        for count=1:size(ta_secs,1)
+            plot(ta_secs(count,:),[0 0],'b','LineWidth',5);
+        end
     end
     if eventnum==0
         cobj = Catalog();
